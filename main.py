@@ -14,9 +14,9 @@ parser.add_argument('-i', '--input', type=str, required=True, help='directory of
 
 print('[INFO] Starting System...')
 print('[INFO] Importing pretrained model..')
-pose_predictor_68_point = dlib.shape_predictor("pretrained_model/shape_predictor_68_face_landmarks.dat")
-pose_predictor_5_point = dlib.shape_predictor("pretrained_model/shape_predictor_5_face_landmarks.dat")
-face_encoder = dlib.face_recognition_model_v1("pretrained_model/dlib_face_recognition_resnet_model_v1.dat")
+pose_predictor_68_point = dlib.shape_predictor("output/pretrained_model/shape_predictor_68_face_landmarks.dat")
+pose_predictor_5_point = dlib.shape_predictor("output/pretrained_model/shape_predictor_5_face_landmarks.dat")
+face_encoder = dlib.face_recognition_model_v1("output/pretrained_model/dlib_face_recognition_resnet_model_v1.dat")
 face_detector = dlib.get_frontal_face_detector()
 print('[INFO] Importing pretrained model..')
 
@@ -83,12 +83,17 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     print('[INFO] Importing faces...')
-    face_to_encode_path = Path(args.input)
-    files = [file_ for file_ in face_to_encode_path.rglob('*.jpg')]
+    face_to_encode_path = ['input/known_faces/Mathis.png', 'input/known_faces/Zuckerberg.png' , 'input/known_faces/Erwan.png','input/known_faces/N1ko.png']
+    files = [file_ for file_ in face_to_encode_path]  # Aucun besoin d'itérer sur la liste ici
 
+    # Instancier un objet Path à partir de la liste de chaînes de caractères
+    face_to_encode_path = Path('input')
+
+    # Utiliser les méthodes de la classe Path
     for file_ in face_to_encode_path.rglob('*.png'):
         files.append(file_)
-    if len(files)==0:
+
+    if len(files) == 0:
         raise ValueError('No faces detect in the directory: {}'.format(face_to_encode_path))
     known_face_names = [os.path.splitext(ntpath.basename(file_))[0] for file_ in files]
 
@@ -113,3 +118,4 @@ if __name__ == '__main__':
     print('[INFO] Stopping System')
     video_capture.release()
     cv2.destroyAllWindows()
+# commande à mettre dans le terminal :"python main.py --input input/known_faces"
